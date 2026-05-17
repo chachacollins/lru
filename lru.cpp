@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <concepts>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -14,7 +15,13 @@ struct Node
     explicit Node(T v) : value(std::move(v)), next(nullptr) {}
 };
 
-template <typename K, typename V>
+template<typename T>
+concept Hashable = requires(T a)
+{
+    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+};
+
+template <Hashable K, typename V>
 class LRU
 {
     int limit;
